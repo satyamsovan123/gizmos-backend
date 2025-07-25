@@ -68,7 +68,12 @@ const checkoutClient = StandardCheckoutClient.getInstance(
   env
 );
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST"],
+  })
+);
 app.use(express.json());
 
 app.get("/api/v1", async (request, response, next) => {
@@ -105,6 +110,12 @@ app.post("/api/v1/order", async (request, response, next) => {
       return item.name === askedItem;
     });
 
+    if (requestedItem[0]?.purchaseType !== "one-time") {
+      const error = new Error("Sorry, this item cannot be purchased.");
+      error.status = 400;
+      throw error;
+    }
+
     if (
       requestedItem.length === 0 ||
       requestedItem[0]?.availableQuantity === 0
@@ -138,6 +149,8 @@ app.post("/api/v1/order", async (request, response, next) => {
         JSON.stringify({
           createdAt: new Date().toISOString(),
           itemId: requestedItem[0].itemId,
+          itemQuantity: itemQuantity,
+          purchaseType: requestedItem[0].purchaseType,
         })
       ) // UDF is User Defined Field LOL!
       .build();
@@ -160,6 +173,96 @@ app.post("/api/v1/order", async (request, response, next) => {
     error.message =
       error.message ||
       "Some error occured while processing order. Please try again later.";
+    return next(error);
+  }
+});
+
+app.post("/api/v1/subscribe", async (request, response, next) => {
+  try {
+    /** -------------- Validations -------------- */
+
+    const askedItem = request?.body?.itemName;
+    const itemQuantity = 1;
+
+    if (!askedItem) {
+      const error = new Error("Sorry, this item is not available.");
+      error.status = 400;
+      throw error;
+    }
+
+    if (!itemQuantity || itemQuantity <= 0) {
+      const error = new Error("Please provide a valid item quantity.");
+      error.status = 400;
+      throw error;
+    }
+
+    const requestedItem = availableShopItems.filter((item) => {
+      return item.name === askedItem;
+    });
+
+    if (requestedItem[0]?.purchaseType !== "subscribe") {
+      const error = new Error("Sorry, this item cannot be subscribed.");
+      error.status = 400;
+      throw error;
+    }
+
+    if (
+      requestedItem.length === 0 ||
+      requestedItem[0]?.availableQuantity === 0
+    ) {
+      const error = new Error("Sorry, this item is not available.");
+      error.status = 400;
+      throw error;
+    }
+
+    if (requestedItem[0]?.availableQuantity < itemQuantity) {
+      const error = new Error(
+        `Sorry, we only have ${requestedItem[0].availableQuantity} ${askedItem} available.`
+      );
+      error.status = 400;
+      throw error;
+    }
+
+    const amountInPaisa = requestedItem[0].priceInRupees * itemQuantity * 100; // Convert to Rupees (1 Rupee = 100 Paise)
+
+    /** ------------------------------------------- */
+
+    /** -------------- Process Order -------------- */
+
+    const merchantOrderId = randomUUID();
+    const redirectUrl =
+      "http://localhost:3000/api/v1/subscribe/success?merchantOrderId=" +
+      encodeURIComponent(merchantOrderId);
+
+    const orderMetaData = MetaInfo.builder()
+      .udf1(
+        JSON.stringify({
+          createdAt: new Date().toISOString(),
+          itemId: requestedItem[0].itemId,
+          itemQuantity: itemQuantity,
+          purchaseType: requestedItem[0].purchaseType,
+        })
+      )
+      .build();
+    const createdOrder = StandardCheckoutPayRequest.builder()
+      .merchantOrderId(merchantOrderId)
+      .amount(amountInPaisa)
+      .redirectUrl(redirectUrl)
+      .metaInfo(orderMetaData)
+      .build();
+
+    const clientPaymentPageDetails = await checkoutClient.pay(createdOrder);
+
+    /** ------------------------------------------- */
+
+    return response.json({
+      message: "Subscription processed successfully.",
+      clientPaymentPageDetails: clientPaymentPageDetails,
+    });
+  } catch (error) {
+    error.message =
+      error.message ||
+      "Some error occured while processing subscription. Please try again later.";
     return next(error);
   }
 });
@@ -204,7 +307,11 @@ app.get("/api/v1/order/success/", async (request, response, next) => {
       state: orderStatus.state,
       createdAt: parsedMetaDataInfo?.createdAt,
       itemId: parsedMetaDataInfo?.itemId,
+      itemQuantity: parsedMetaDataInfo?.itemQuantity,
+      purchaseType: parsedMetaDataInfo?.purchaseType,
     };
+
+    console.log("Order Details:", orderDetails);
 
     /** ------------------------------------------- */
 
@@ -215,6 +322,64 @@ app.get("/api/v1/order/success/", async (request, response, next) => {
     error.message =
       error.message ||
       "Some error occured while creating order. Please try again later.";
+    return next(error);
+  }
+});
+
+app.get("/api/v1/subscribe/success/", async (request, response, next) => {
+  try {
+    /** -------------- Validations -------------- */
+
+    const merchantOrderId = request.query?.merchantOrderId;
+    if (!merchantOrderId) {
+      const error = new Error("Please provide a valid Merchant Order ID.");
+      error.status = 400;
+      throw error;
+    }
+
+    const orderStatus = await checkoutClient.getOrderStatus(merchantOrderId);
+    if (!orderStatus) {
+      const error = new Error(
+        "Order not found or invalid. Please try again later."
+      );
+      error.status = 400;
+      throw error;
+    }
+    if (orderStatus.state !== "COMPLETED") {
+      const error = new Error(
+        `Order is not completed. It is currently in ${orderStatus.state} state. Please try again later.`
+      );
+      error.status = 400;
+      throw error;
+    }
+
+    const parsedMetaDataInfo = JSON.parse(orderStatus.metaInfo?.udf1);
+
+    /** ------------------------------------------- */
+
+    /** -------------- Updated Database -------------- */
+
+    const orderDetails = {
+      merchantOrderId: merchantOrderId,
+      orderId: orderStatus.orderId,
+      amountInPaisa: orderStatus.amount,
+      state: orderStatus.state,
+      createdAt: parsedMetaDataInfo?.createdAt,
+      itemId: parsedMetaDataInfo?.itemId,
+      itemQuantity: parsedMetaDataInfo?.itemQuantity,
+      purchaseType: parsedMetaDataInfo?.purchaseType,
+    };
+    console.log("Subscription Details:", orderDetails);
+
+    /** ------------------------------------------- */
+
+    return response.json({
+      message: "Subscription created successfully.",
+    });
+  } catch (error) {
+    error.message =
+      error.message ||
+      "Some error occured while creating subscription. Please try again later.";
     return next(error);
   }
 });
