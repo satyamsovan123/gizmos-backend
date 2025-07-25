@@ -105,7 +105,10 @@ app.post("/api/v1/order", async (request, response, next) => {
       return item.name === askedItem;
     });
 
-    if (requestedItem.length === 0) {
+    if (
+      requestedItem.length === 0 ||
+      requestedItem[0]?.availableQuantity === 0
+    ) {
       const error = new Error("Sorry, this item is not available.");
       error.status = 400;
       throw error;
