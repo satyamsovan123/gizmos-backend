@@ -2,43 +2,37 @@ import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema } = mongoose;
 
-class UserModel {
+class DiscountModel {
   constructor() {}
 
   static getSchema() {
-    const userSchema = new Schema(
+    const discountSchema = new Schema(
       {
-        name: {
-          type: String,
-          required: true,
-        },
-        email: {
+        code: {
           type: String,
           required: true,
           unique: true,
         },
-        password: {
-          type: String,
+        percentage: {
+          type: Number,
           required: true,
+          min: 0,
+          max: 100,
         },
-        role: {
-          type: String,
-          enum: ["user", "admin"],
-          default: "user",
+        validFrom: {
+          type: Date,
         },
-        refreshToken: {
-          type: String,
-          default: "",
+        validTo: {
+          type: Date,
         },
       },
       {
         timestamps: true,
       }
     );
-
-    userSchema.plugin(mongoosePaginate);
-    userSchema.index({ email: 1 });
-    return userSchema;
+    discountSchema.index({ code: 1 });
+    discountSchema.plugin(mongoosePaginate);
+    return discountSchema;
   }
 
   static getModel(modelName) {
@@ -49,6 +43,6 @@ class UserModel {
   }
 }
 
-const User = UserModel.getModel("User");
+const Discount = DiscountModel.getModel("Discount");
 
-export { User };
+export { Discount };
