@@ -14,7 +14,7 @@ class DatabaseService {
 
   async findAll(query = {}) {
     try {
-      const records = await this.model.find(query);
+      const records = await this.model.find(query).lean();
       return records;
     } catch (error) {
       throw new Error(`Error fetching records: ${error.message}`);
@@ -23,7 +23,7 @@ class DatabaseService {
 
   async findById(id) {
     try {
-      const record = await this.model.findById(id);
+      const record = await this.model.findById(id).lean();
       if (!record) {
         throw new Error("Record not found");
       }

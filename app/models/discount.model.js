@@ -3,6 +3,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema } = mongoose;
 
 class DiscountModel {
+  static modelName = "Discount";
   constructor() {}
 
   static getSchema() {
@@ -30,19 +31,18 @@ class DiscountModel {
         timestamps: true,
       }
     );
-    discountSchema.index({ code: 1 });
     discountSchema.plugin(mongoosePaginate);
     return discountSchema;
   }
 
-  static getModel(modelName) {
-    if (mongoose.models[modelName]) {
-      return mongoose.models[modelName];
+  static getModel() {
+    if (mongoose.models[this.modelName]) {
+      return mongoose.models[this.modelName];
     }
-    return mongoose.model(modelName, this.getSchema());
+    return mongoose.model(this.modelName, this.getSchema());
   }
 }
 
-const Discount = DiscountModel.getModel("Discount");
+const Discount = DiscountModel.getModel();
 
 export { Discount };

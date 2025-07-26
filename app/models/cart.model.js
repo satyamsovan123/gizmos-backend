@@ -3,6 +3,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema } = mongoose;
 
 class CartModel {
+  static modelName = "Cart";
   constructor() {}
 
   static getSchema() {
@@ -43,14 +44,14 @@ class CartModel {
     return cartSchema;
   }
 
-  static getModel(modelName) {
-    if (mongoose.models[modelName]) {
-      return mongoose.models[modelName];
+  static getModel() {
+    if (mongoose.models[this.modelName]) {
+      return mongoose.models[this.modelName];
     }
-    return mongoose.model(modelName, this.getSchema());
+    return mongoose.model(this.modelName, this.getSchema());
   }
 }
 
-const Cart = CartModel.getModel("Cart");
+const Cart = CartModel.getModel();
 
 export { Cart };

@@ -5,8 +5,7 @@ class SuccessResponseMiddleware {
 
   send(request, response, data = null) {
     const statusCode = response.statusCode || 200;
-    const message =
-      response.statusMessage || ResponseConstant.api.genericSuccess;
+    const message = response.message || ResponseConstant.api.genericSuccess;
 
     return response.status(statusCode).json({
       statusCode: statusCode,

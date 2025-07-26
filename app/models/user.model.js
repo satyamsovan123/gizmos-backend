@@ -3,6 +3,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema } = mongoose;
 
 class UserModel {
+  static modelName = "User";
   constructor() {}
 
   static getSchema() {
@@ -37,18 +38,17 @@ class UserModel {
     );
 
     userSchema.plugin(mongoosePaginate);
-    userSchema.index({ email: 1 });
     return userSchema;
   }
 
-  static getModel(modelName) {
-    if (mongoose.models[modelName]) {
-      return mongoose.models[modelName];
+  static getModel() {
+    if (mongoose.models[this.modelName]) {
+      return mongoose.models[this.modelName];
     }
-    return mongoose.model(modelName, this.getSchema());
+    return mongoose.model(this.modelName, this.getSchema());
   }
 }
 
-const User = UserModel.getModel("User");
+const User = UserModel.getModel();
 
 export { User };

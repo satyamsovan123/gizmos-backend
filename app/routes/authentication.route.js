@@ -11,8 +11,12 @@ class AuthenticationRoute {
     const signupController = new SignupController();
     const signinController = new SigninController();
 
-    this.authenticationRouter.route("/signup").post(signupController.signup);
-    this.authenticationRouter.route("/signin").post(signinController.signin);
+    this.authenticationRouter
+      .route("/signup")
+      .post(signupController.signup.bind(signupController));
+    this.authenticationRouter
+      .route("/signin")
+      .post(signinController.signin.bind(signinController));
   }
 }
 
