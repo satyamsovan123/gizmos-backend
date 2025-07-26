@@ -1,14 +1,23 @@
 {
-  "name": "phone-pe-gateway",
+  "name": "gizmos-backend",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "phonepe",
+    "payment gateway",
+    "Phone Pe Node.js integration",
+    "gizmos backend"
+  ],
+  "author": "Satyam Sovan Mishra",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/satyamsovan123/gizmos-backend.git"
+  },
   "license": "ISC",
-  "description": "",
+  "description": "This is a Node.js application that is backend for the gizmos application.",
   "dependencies": {
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
