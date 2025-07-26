@@ -2,14 +2,21 @@
   "name": "gizmos-backend",
   "version": "1.0.0",
   "main": "app.js",
+  "type": "module",
+  "engines": {
+    "node": ">=23.0.0"
+  },
   "scripts": {
+    "development": "NODE_ENV=development nodemon app.js",
+    "production": "NODE_ENV=production node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "phonepe",
     "payment gateway",
     "Phone Pe Node.js integration",
-    "gizmos backend"
+    "gizmos backend",
+    "satyamsovan123"
   ],
   "author": "Satyam Sovan Mishra",
   "repository": {
@@ -19,11 +26,26 @@
   "license": "ISC",
   "description": "This is a Node.js application that is backend for the gizmos application.",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.850.0",
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "geoip-lite": "^1.4.10",
+    "helmet": "^8.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "luxon": "^3.7.1",
+    "mongoose": "^8.16.5",
+    "mongoose-paginate-v2": "^1.9.1",
+    "multer": "^2.0.2",
+    "node-cron": "^4.2.1",
     "pg-sdk-node": "https://phonepe.mycloudrepo.io/public/repositories/phonepe-pg-sdk-node/releases/v2/phonepe-pg-sdk-node.tgz",
     "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
