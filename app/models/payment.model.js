@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
+const { Schema } = mongoose;
+
 const paymentSchema = new Schema(
   {
     amount: { type: Number, required: true, min: 0 },
@@ -13,3 +17,8 @@ const paymentSchema = new Schema(
     timestamps: true,
   }
 );
+
+paymentSchema.plugin(mongoosePaginate);
+const Payment = mongoose.model("Payment", paymentSchema);
+
+export { Payment };

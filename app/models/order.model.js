@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
+const { Schema } = mongoose;
+
 const orderSchema = new Schema(
   {
     status: {
@@ -23,3 +27,8 @@ const orderSchema = new Schema(
     timestamps: true,
   }
 );
+
+orderSchema.plugin(mongoosePaginate);
+const Order = mongoose.model("Order", orderSchema);
+
+export { Order };

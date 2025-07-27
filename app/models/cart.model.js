@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
+const { Schema } = mongoose;
+
 const cartSchema = new Schema(
   {
     user: {
@@ -29,3 +33,8 @@ const cartSchema = new Schema(
     timestamps: true,
   }
 );
+
+cartSchema.plugin(mongoosePaginate);
+const Cart = mongoose.model("Cart", cartSchema);
+
+export { Cart };

@@ -1,14 +1,14 @@
 {
   "name": "gizmos-backend",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "server.js",
   "type": "module",
   "engines": {
     "node": ">=23.0.0"
   },
   "scripts": {
-    "development": "NODE_ENV=development nodemon app.js",
-    "production": "NODE_ENV=production node app.js",
+    "development": "NODE_ENV=development nodemon server.js",
+    "production": "NODE_ENV=production node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -46,7 +46,8 @@
     "pg-sdk-node": "https://phonepe.mycloudrepo.io/public/repositories/phonepe-pg-sdk-node/releases/v2/phonepe-pg-sdk-node.tgz",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

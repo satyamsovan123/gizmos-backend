@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
+const { Schema } = mongoose;
+
 const discountSchema = new Schema(
   {
     code: {
@@ -22,3 +26,8 @@ const discountSchema = new Schema(
     timestamps: true,
   }
 );
+
+discountSchema.plugin(mongoosePaginate);
+const Discount = mongoose.model("Discount", discountSchema);
+
+export { Discount };

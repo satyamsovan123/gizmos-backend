@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
+const { Schema } = mongoose;
+
 const productSchema = new Schema(
   {
     name: {
@@ -32,3 +36,8 @@ const productSchema = new Schema(
     timestamps: true,
   }
 );
+
+productSchema.plugin(mongoosePaginate);
+const Product = mongoose.model("Product", productSchema);
+
+export { Product };
