@@ -1,5 +1,10 @@
 import winston from "winston";
 
+/**
+ * @file This file configures the Winston logger for the application.
+ * It sets up different logging levels, formats, and transports.
+ * The logger is used throughout the application to log messages at various levels.
+ */
 const levels = {
   error: 0,
   warn: 1,

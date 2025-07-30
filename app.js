@@ -1,3 +1,8 @@
+/**
+ * @file This is the main entry point of the application.
+ * It sets up the Express server, middleware, and routes.
+ * It also configures Swagger documentation and error handling.
+ */
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -18,6 +23,7 @@ import "./app/subscribers/payment.subscriber.js";
 dotenv.config();
 const app = express();
 
+// Middleware setup
 app.use(helmet());
 app.use(
   cors({
@@ -37,9 +43,11 @@ app.use(
   })
 );
 
+// Swagger documentation setup
 const swaggerDocs = swaggerJsdoc(documentationOptions);
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+// Routes setup
 app.use("/api/v1", router);
 app.use(errorResponseHandler);
 

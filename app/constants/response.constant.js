@@ -1,9 +1,17 @@
+/**
+ * @constant {Object} SERVER_ERROR_RESPONSE
+ * @description Contains standardized error messages for server responses.
+ */
 const SERVER_ERROR_RESPONSE = {
   TOO_MANY_REQUESTS: "Too many requests.",
   INTERNAL_SERVER_ERROR: "Internal server error.",
   NOT_FOUND: "Resource not found.",
 };
 
+/**
+ * @constant {Object} API_RESPONSE
+ * @description Contains standardized success and error messages for API responses.
+ */
 const API_RESPONSE = {
   API_OPERATIONAL: "API is operational.",
 

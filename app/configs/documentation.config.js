@@ -1,3 +1,7 @@
+/**
+ * This is configuration for API documentation using Swagger.
+ * It defines the API's metadata, security schemes, and server URLs.
+ */
 const documentationOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",

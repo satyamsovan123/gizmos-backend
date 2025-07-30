@@ -1,3 +1,9 @@
+/**
+ * @file This file defines the main router for the application.
+ * It handles the root route and integrates all other routes.
+ * The router is responsible for routing requests to the appropriate controllers.
+ * It also provides a fallback for undefined routes.
+ */
 import express from "express";
 
 import { authenticationRouter } from "./authentication.route.js";

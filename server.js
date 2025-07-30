@@ -1,3 +1,7 @@
+/**
+ * @file This is the main entry point of the application.
+ * It starts the server and connects to the database.
+ */
 import { app } from "./app.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -16,4 +20,5 @@ const startServer = async () => {
   }
 };
 
+// Start the server
 startServer();
