@@ -1,3 +1,6 @@
+/**
+ * @file This file defines the authentication routes for user.
+ */
 import { signin, signup } from "../controllers/index.js";
 
 import express from "express";
