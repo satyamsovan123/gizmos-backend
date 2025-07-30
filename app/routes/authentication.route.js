@@ -8,7 +8,7 @@ const authenticationRouter = express.Router();
  * @swagger
  * /signin:
  *   post:
- *     summary: Sign in a user
+ *     summary: Signs in a user
  *     tags: [Authentication]
  *     requestBody:
  *       required: true
@@ -40,7 +40,7 @@ authenticationRouter.post("/signin", signin);
  * @swagger
  * /signup:
  *   post:
- *     summary: Sign up a new user
+ *     summary: Signs up a new user
  *     tags: [Authentication]
  *     requestBody:
  *      required: true
