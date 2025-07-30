@@ -9,7 +9,7 @@ import mongoose from "mongoose";
  *
  * @async
  * @function connectToDatabase
- * @returns {Promise<void>} A promise that resolves if the connection is successful.
+ * @returns {Promise<void>} a promise that resolves if the connection is successful.
  */
 async function connectToDatabase() {
   try {

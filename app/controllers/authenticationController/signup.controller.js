@@ -4,6 +4,11 @@ import { appEventEmitter } from "../../events/index.js";
 import Joi from "joi";
 import { User } from "../../models/index.js";
 
+/**
+ * Validates the incoming request data.
+ * @param {*} request - The incoming request object.
+ * @returns {Promise<{ isValid: boolean, errors: string }>} object containing validation result.
+ */
 async function validateData(request) {
   let validationResult = { isValid: true, errors: "" };
   try {
@@ -80,6 +85,15 @@ async function validateData(request) {
   return validationResult;
 }
 
+/**
+ * Handles the signup request.
+ * @param {*} request - The incoming request object.
+ * @param {*} response - The outgoing response object.
+ * @param {*} next - The next middleware function.
+ * @returns {Promise<void>} response.
+ * @throws {Error} - If validation fails, an error is thrown with status 400 and validation errors.
+ * @throws {Error} - If an unexpected error occurs, it is logged and passed to the next middleware.
+ */
 async function signup(request, response, next) {
   try {
     const validationResult = await validateData(request);

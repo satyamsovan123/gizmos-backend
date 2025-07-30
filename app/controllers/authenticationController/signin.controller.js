@@ -2,6 +2,11 @@ import { API_RESPONSE } from "../../constants/index.js";
 import { logger } from "../../services/index.js";
 import Joi from "joi";
 
+/**
+ * Validates the incoming request data.
+ * @param {*} request - The incoming request object.
+ * @returns {Promise<{ isValid: boolean, errors: string }>} object containing validation result.
+ */
 async function validateData(request) {
   let validationResult = { isValid: true, errors: "" };
   try {
@@ -65,6 +70,13 @@ async function validateData(request) {
   return validationResult;
 }
 
+/**
+ * Handles the signin request.
+ * @param {*} request - The incoming request object.
+ * @returns {Promise<{ isValid: boolean, errors: string }>} response.
+ * @throws {Error} - If validation fails, an error is thrown with status 400 and validation errors.
+ * @throws {Error} - If an unexpected error occurs, it is logged and passed to the next middleware.
+ */
 async function signin(request, response, next) {
   try {
     const validationResult = await validateData(request);

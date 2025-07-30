@@ -40,7 +40,7 @@ const documentationOptions = {
       },
     ],
   },
-  apis: ["./models/*.js", "./routes/*.js"],
+  apis: ["./app/models/*.js", "./app/routes/*.js", "./app/controllers/*.js"],
 };
 
 export { documentationOptions };
