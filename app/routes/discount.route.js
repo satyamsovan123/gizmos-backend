@@ -9,6 +9,7 @@ import {
 } from "../controllers/index.js";
 
 import express from "express";
+import { accessTokenAndHandler } from "../middlewares/index.js";
 
 const discountRouter = express.Router();
 
@@ -42,7 +43,7 @@ discountRouter.get("/all", getDiscounts);
  *       400:
  *         description: Invalid request
  */
-discountRouter.post("/create", createDiscount);
+discountRouter.post("/create", accessTokenAndHandler, createDiscount);
 
 /**
  * @swagger
@@ -67,7 +68,7 @@ discountRouter.post("/create", createDiscount);
  *       404:
  *         description: Discount not found
  */
-discountRouter.put("/:id", editDiscount);
+discountRouter.put("/:id", accessTokenAndHandler, editDiscount);
 
 /**
  * @swagger
@@ -88,6 +89,6 @@ discountRouter.put("/:id", editDiscount);
  *       404:
  *         description: Discount not found
  */
-discountRouter.delete("/:id", deleteDiscount);
+discountRouter.delete("/:id", accessTokenAndHandler, deleteDiscount);
 
 export { discountRouter };

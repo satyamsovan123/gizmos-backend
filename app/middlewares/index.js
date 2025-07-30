@@ -3,4 +3,4 @@
  * It serves as a "barrel file" for cleaner imports.
  */
 export { errorResponseHandler } from "./errorResponse.middleware.js";
-export { accessTokenAndRoleHandler } from "./accessToken.middleware.js";
+export { accessTokenAndHandler } from "./accessTokenAndRole.middleware.js";

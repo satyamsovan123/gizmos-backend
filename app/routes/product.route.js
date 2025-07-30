@@ -10,6 +10,7 @@ import {
 } from "../controllers/index.js";
 
 import express from "express";
+import { accessTokenAndHandler } from "../middlewares/index.js";
 
 const productRouter = express.Router();
 
@@ -70,7 +71,7 @@ productRouter.get("/all", getProducts);
  *       201:
  *         description: Product created successfully
  */
-productRouter.post("/create", createProduct);
+productRouter.post("/create", accessTokenAndHandler, createProduct);
 
 /**
  * @swagger
@@ -96,7 +97,7 @@ productRouter.post("/create", createProduct);
  *        404:
  *          description: Product not found with the provided ID
  */
-productRouter.put("/:id", editProduct);
+productRouter.put("/:id", accessTokenAndHandler, editProduct);
 
 /**
  * @swagger
@@ -117,6 +118,6 @@ productRouter.put("/:id", editProduct);
  *       404:
  *         description: Product not found
  */
-productRouter.delete("/:id", deleteProduct);
+productRouter.delete("/:id", accessTokenAndHandler, deleteProduct);
 
 export { productRouter };

@@ -4,6 +4,7 @@
 import { getPaymentLink } from "../controllers/index.js";
 
 import express from "express";
+import { accessTokenAndHandler } from "../middlewares/index.js";
 
 const paymentRouter = express.Router();
 
@@ -24,6 +25,6 @@ const paymentRouter = express.Router();
  *          404:
  *              description: Payment link not found
  */
-paymentRouter.post("/link", getPaymentLink);
+paymentRouter.post("/link", accessTokenAndHandler, getPaymentLink);
 
 export { paymentRouter };

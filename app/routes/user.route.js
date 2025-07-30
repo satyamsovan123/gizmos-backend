@@ -4,6 +4,7 @@
 import { getUser, editUser } from "../controllers/index.js";
 
 import express from "express";
+import { accessTokenAndHandler } from "../middlewares/index.js";
 
 const userRouter = express.Router();
 
@@ -11,23 +12,23 @@ const userRouter = express.Router();
  * @swagger
  * /user/{id}:
  *   get:
- *     summary: Get user by ID
- *     description: Retrieve a user by their unique ID.
- *     tags: [User]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the user to retrieve
- *         schema:
- *           type: string
- *       responses:
- *         200:
- *           description: User retrieved successfully
- *         404:
- *           description: User not found with the provided ID
+ *      summary: Get user by ID
+ *      description: Retrieve a user by their unique ID.
+ *      tags: [User]
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          description: ID of the user to retrieve
+ *          schema:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description: User retrieved successfully
+ *        404:
+ *          description: User not found with the provided ID
  */
-userRouter.get("/:id", getUser);
+userRouter.get("/:id", accessTokenAndHandler, getUser);
 
 /**
  * @swagger
@@ -53,6 +54,6 @@ userRouter.get("/:id", getUser);
  *       404:
  *         description: User not found with the provided ID
  */
-userRouter.patch("/:id", editUser);
+userRouter.patch("/:id", accessTokenAndHandler, editUser);
 
 export { userRouter };

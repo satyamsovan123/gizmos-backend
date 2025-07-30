@@ -13,6 +13,7 @@ import {
 } from "../controllers/index.js";
 
 import express from "express";
+import { accessTokenAndHandler } from "../middlewares/index.js";
 
 const orderRouter = express.Router();
 
@@ -32,7 +33,7 @@ const orderRouter = express.Router();
  *       400:
  *         description: Invalid request
  */
-orderRouter.post("/create", createOrder);
+orderRouter.post("/create", accessTokenAndHandler, createOrder);
 
 /**
  * @swagger
@@ -46,7 +47,7 @@ orderRouter.post("/create", createOrder);
  *       404:
  *         description: Orders not found
  */
-orderRouter.get("/all", getOrders);
+orderRouter.get("/all", accessTokenAndHandler, getOrders);
 
 /**
  * @swagger
@@ -68,7 +69,7 @@ orderRouter.get("/all", getOrders);
  *        404:
  *          description: Order not found with the provided ID
  */
-orderRouter.get("/:id", getOrder);
+orderRouter.get("/:id", accessTokenAndHandler, getOrder);
 
 /**
  * @swagger
@@ -89,7 +90,7 @@ orderRouter.get("/:id", getOrder);
  *       404:
  *         description: Subscription not found with the provided ID
  */
-orderRouter.put("/:id", editSubscription);
+orderRouter.put("/:id", accessTokenAndHandler, editSubscription);
 
 /**
  * @swagger
@@ -110,7 +111,7 @@ orderRouter.put("/:id", editSubscription);
  *       404:
  *         description: Subscription not found with the provided ID
  */
-orderRouter.delete("/:id", cancelSubscription);
+orderRouter.delete("/:id", accessTokenAndHandler, cancelSubscription);
 
 /**
  * @swagger
@@ -131,7 +132,7 @@ orderRouter.delete("/:id", cancelSubscription);
  *       404:
  *         description: Order not found with the provided ID
  */
-orderRouter.post("/:id/refund", refundOrder);
+orderRouter.post("/:id/refund", accessTokenAndHandler, refundOrder);
 
 /**
  * @swagger
@@ -152,7 +153,7 @@ orderRouter.post("/:id/refund", refundOrder);
  *       404:
  *         description: Order not found with the provided ID
  */
-orderRouter.delete("/:id/cancel", cancelOrder);
+orderRouter.delete("/:id/cancel", accessTokenAndHandler, cancelOrder);
 
 /**
  * @swagger
@@ -173,6 +174,6 @@ orderRouter.delete("/:id/cancel", cancelOrder);
  *       404:
  *         description: Order not found with the provided ID
  */
-orderRouter.post("/:id/subscribe", createSubscription);
+orderRouter.post("/:id/subscribe", accessTokenAndHandler, createSubscription);
 
 export { orderRouter };

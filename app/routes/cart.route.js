@@ -4,6 +4,7 @@
 import { getCart, editCart } from "../controllers/index.js";
 
 import express from "express";
+import { accessTokenAndHandler } from "../middlewares/index.js";
 
 const cartRouter = express.Router();
 
@@ -30,7 +31,7 @@ const cartRouter = express.Router();
  *       404:
  *         description: Cart not found
  */
-cartRouter.get("/:id", getCart);
+cartRouter.get("/:id", accessTokenAndHandler, getCart);
 
 /**
  * @swagger
@@ -55,6 +56,6 @@ cartRouter.get("/:id", getCart);
  *       400:
  *         description: Invalid request
  */
-cartRouter.put("/:id", editCart);
+cartRouter.put("/:id", accessTokenAndHandler, editCart);
 
 export { cartRouter };
