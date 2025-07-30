@@ -114,8 +114,8 @@ async function signup(request, response, next) {
       status: 200,
     });
   } catch (error) {
-    logger.error("Error in signup controller:", error);
-    next(error);
+    logger.error("Error in signup controller:", JSON.stringify(error));
+    next(error || new Error(API_RESPONSE.AUTHENTICATION.SIGN_UP_FAILURE));
   }
 }
 

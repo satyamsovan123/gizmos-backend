@@ -92,8 +92,8 @@ async function signin(request, response, next) {
       status: 200,
     });
   } catch (error) {
-    logger.error("Error in signin controller:", error);
-    next(error);
+    logger.error("Error in signin controller:", JSON.stringify(error));
+    next(error || new Error(API_RESPONSE.AUTHENTICATION.SIGN_IN_FAILURE));
   }
 }
 

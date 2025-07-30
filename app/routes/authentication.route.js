@@ -1,5 +1,5 @@
 /**
- * @file This file defines the authentication routes for user.
+ * @file This file defines the authentication routes.
  */
 import { signin, signup } from "../controllers/index.js";
 
@@ -9,7 +9,7 @@ const authenticationRouter = express.Router();
 
 /**
  * @swagger
- * /signin:
+ * /auth/signin:
  *   post:
  *     summary: Signs in a user
  *     tags: [Authentication]
@@ -41,7 +41,7 @@ authenticationRouter.post("/signin", signin);
 
 /**
  * @swagger
- * /signup:
+ * /auth/signup:
  *   post:
  *     summary: Signs up a new user
  *     tags: [Authentication]

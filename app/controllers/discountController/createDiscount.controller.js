@@ -35,13 +35,13 @@ async function validateData(request) {
 }
 
 /**
- * Handles the get products request.
+ * Handles the create discount request.
  * @param {*} request - The incoming request object.
  * @returns {Promise<{ isValid: boolean, errors: string }>} response.
  * @throws {Error} - If validation fails, an error is thrown with status 400 and validation errors.
  * @throws {Error} - If an unexpected error occurs, it is logged and passed to the next middleware.
  */
-async function getProducts(request, response, next) {
+async function createDiscount(request, response, next) {
   try {
     const validationResult = await validateData(request);
     if (!validationResult.isValid) {
@@ -51,14 +51,17 @@ async function getProducts(request, response, next) {
     }
 
     return response.status(200).json({
-      message: API_RESPONSE.PRODUCT.PRODUCT_LIST_FETCH_SUCCESS,
+      message: API_RESPONSE.DISCOUNT.DISCOUNT_CREATED,
       data: null,
       status: 200,
     });
   } catch (error) {
-    logger.error("Error in get products controller:", JSON.stringify(error));
-    next(error || new Error(API_RESPONSE.PRODUCT.PRODUCT_LIST_FETCH_FAILURE));
+    logger.error(
+      "Error in create discount controller: ",
+      JSON.stringify(error)
+    );
+    next(error || new Error(API_RESPONSE.DISCOUNT.DISCOUNT_CREATION_FAILED));
   }
 }
 
-export { getProducts };
+export { createDiscount };
