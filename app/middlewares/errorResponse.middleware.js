@@ -9,8 +9,6 @@ async function errorResponseHandler(error, request, response, next) {
     message: message,
     data: null,
   });
-
-  // next();
 }
 
 export { errorResponseHandler };

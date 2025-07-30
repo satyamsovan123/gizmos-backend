@@ -8,6 +8,10 @@ import { SERVER_ERROR_RESPONSE } from "./app/constants/index.js";
 import { router } from "./app/routes/index.js";
 import { errorResponseHandler } from "./app/middlewares/index.js";
 
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import { documentationOptions } from "./app/configs/index.js";
+
 import "./app/subscribers/signup.subscriber.js";
 import "./app/subscribers/payment.subscriber.js";
 
@@ -32,7 +36,11 @@ app.use(
     standardHeaders: true,
   })
 );
+
+const swaggerDocs = swaggerJsdoc(documentationOptions);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 app.use("/api/v1", router);
 app.use(errorResponseHandler);
 
-export default app;
+export { app };
