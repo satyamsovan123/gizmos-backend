@@ -27,11 +27,8 @@ It provides user authentication, cart management, product/catalog operations, di
 - [API Documentation](#api-documentation)
 - [Authentication](#authentication)
 - [Example Endpoints](#example-endpoints)
-- [Logging](#logging)
 - [Deployment](#deployment)
-- [Development](#development)
-- [Contributing](#contributing)
-- [License](#license)
+- [Folder Structure](#folder-structure)
 
 ## Prerequisites
 
@@ -80,6 +77,23 @@ Refresh tokens are sent in cookies for session management and access token are s
 ## Payment Integration
 
 This API integrates with PhonePe for payment processing. You will need to provide PhonePe credentials in the `.env` file to use the payment features.
+
+## Example Endpoints
+
+- **Sign Up**: `POST /api/v1/auth/signup`
+- **Sign In**: `POST /api/v1/auth/signin`
+- **Get User Profile**: `GET /api/v1/users/profile`
+- **Update User Profile**: `PUT /api/v1/users/profile`
+- **Create Product**: `POST /api/v1/products`
+- **Get Products**: `GET /api/v1/products`
+- **Create Cart**: `POST /api/v1/carts`
+- **Get Cart**: `GET /api/v1/carts`
+- **Create Order**: `POST /api/v1/orders`
+- **Generate Payment Link**: `POST /api/v1/payments/link`
+
+## Deployment
+
+For deployment, this app uses Render. It is deployed as a web service.
 
 ## Folder Structure
 
