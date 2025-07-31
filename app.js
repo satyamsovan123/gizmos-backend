@@ -23,6 +23,9 @@ import "./app/subscribers/payment.subscriber.js";
 dotenv.config();
 const app = express();
 
+// Trust first proxy for rate limiting
+app.set("trust proxy", 1);
+
 // Middleware setup
 app.use(helmet());
 app.use(
