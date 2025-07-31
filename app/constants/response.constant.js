@@ -30,6 +30,8 @@ const API_RESPONSE = {
     PASSWORD_RESET_SUCCESS: "Password changed successfully.",
     PASSWORD_RESET_FAILURE: "Password change failed. Please try again.",
     TOKEN_INVALID: "Token is invalid.",
+    TOKEN_GENERATION_FAILURE: "Token generation failed.",
+    ENCRYPTION_FAILURE: "Encryption failed.",
   },
 
   CART: {
@@ -54,6 +56,7 @@ const API_RESPONSE = {
   },
 
   USER: {
+    USER_EXISTS: "User already exists.",
     USER_PROFILE_FETCH_SUCCESS: "User profile fetched successfully.",
     USER_PROFILE_FETCH_FAILURE:
       "Failed to fetch user profile. Please try again.",

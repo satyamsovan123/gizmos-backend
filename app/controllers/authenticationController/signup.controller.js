@@ -1,8 +1,9 @@
 import { API_RESPONSE } from "../../constants/index.js";
-import { logger } from "../../services/index.js";
+import { create, find, logger } from "../../services/index.js";
 import { appEventEmitter } from "../../events/index.js";
 import Joi from "joi";
 import { User } from "../../models/index.js";
+import { generateTokens, hashText } from "./helper.js";
 
 /**
  * Validates the incoming request data.
@@ -87,6 +88,7 @@ async function validateData(request) {
 
 /**
  * Handles the signup request.
+ * Validates data -> Checks if user exists -> Encrypts password -> Creates user -> Emits event
  * @param {*} request - The incoming request object.
  * @param {*} response - The outgoing response object.
  * @param {*} next - The next middleware function.
@@ -104,13 +106,46 @@ async function signup(request, response, next) {
       });
     }
 
-    appEventEmitter.emit("user.signup.success", {
+    const user = {
+      name: request.body.name,
       email: request.body.email,
+      password: request.body.password,
+    };
+
+    // Check if user already exists
+    const existingUser = await find(User, {
+      email: user.email,
     });
+
+    if (existingUser.length > 0) {
+      const errorMessage = API_RESPONSE.USER.USER_EXISTS;
+      const error = new Error(errorMessage);
+      error.status = 409;
+      return next(error);
+    }
+
+    // Encrypt password before saving
+    user.password = await hashText(user.password);
+
+    const createdUser = await create(User, user);
+
+    if (!createdUser) {
+      const errorMessage = API_RESPONSE.AUTHENTICATION.SIGN_UP_FAILURE;
+      const error = new Error(errorMessage);
+      error.status = 500;
+      return next(error);
+    }
+
+    // Remove sensitive data from response
+    createdUser.password = undefined;
+    createdUser.refreshToken = undefined;
+
+    // Emit signup event
+    appEventEmitter.emit("user.signup.success", createdUser);
 
     return response.status(200).json({
       message: API_RESPONSE.AUTHENTICATION.SIGN_UP_SUCCESS,
-      data: null,
+      data: createdUser,
       status: 200,
     });
   } catch (error) {

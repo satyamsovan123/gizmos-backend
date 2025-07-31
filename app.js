@@ -8,7 +8,6 @@ import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
 import { SERVER_ERROR_RESPONSE } from "./app/constants/index.js";
 import { router } from "./app/routes/index.js";
 import { errorResponseHandler } from "./app/middlewares/index.js";
@@ -20,7 +19,6 @@ import { documentationOptions } from "./app/configs/index.js";
 import "./app/subscribers/signup.subscriber.js";
 import "./app/subscribers/payment.subscriber.js";
 
-dotenv.config();
 const app = express();
 
 // Trust first proxy for rate limiting

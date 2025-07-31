@@ -9,5 +9,5 @@ import { logger } from "../services/index.js";
 const signupEvent = "user.signup.success";
 
 appEventEmitter.on(signupEvent, (data) => {
-  logger.info(`Email sent successfully: ${data.email}`);
+  logger.info(`Signup email sent successfully: ${data.email}`);
 });

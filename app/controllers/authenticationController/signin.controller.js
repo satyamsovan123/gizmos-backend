@@ -1,6 +1,8 @@
 import { API_RESPONSE } from "../../constants/index.js";
-import { logger } from "../../services/index.js";
+import { User } from "../../models/index.js";
+import { find, logger, update } from "../../services/index.js";
 import Joi from "joi";
+import { compareTextAndHash, generateTokens } from "./helper.js";
 
 /**
  * Validates the incoming request data.
@@ -72,6 +74,7 @@ async function validateData(request) {
 
 /**
  * Handles the signin request.
+ * Validates data -> Checks if email and password matches -> Generates tokens -> Save refresh token in database -> Sets refresh token in cookie -> Sets access token in header
  * @param {*} request - The incoming request object.
  * @returns {Promise<{ isValid: boolean, errors: string }>} response.
  * @throws {Error} - If validation fails, an error is thrown with status 400 and validation errors.
@@ -85,6 +88,63 @@ async function signin(request, response, next) {
       error.status = 400;
       throw error;
     }
+
+    const user = {
+      name: request.body.name,
+      email: request.body.email,
+      password: request.body.password,
+    };
+
+    // Check if user exists
+    const existingUser = (await find(User, { email: user.email }))[0];
+    if (!existingUser) {
+      const error = new Error(API_RESPONSE.AUTHENTICATION.SIGN_IN_FAILURE);
+      error.status = 401;
+      throw error;
+    }
+
+    // Check if password matches
+    const isPasswordValid = await compareTextAndHash(
+      user.password,
+      existingUser.password
+    );
+
+    if (!isPasswordValid) {
+      const error = new Error(API_RESPONSE.AUTHENTICATION.SIGN_IN_FAILURE);
+      error.status = 401;
+      throw error;
+    }
+
+    // Generate tokens
+    existingUser.password = undefined;
+    existingUser.refreshToken = undefined;
+
+    const tokens = generateTokens(existingUser);
+
+    // Save refresh token in database
+    update(
+      User,
+      { _id: existingUser._id },
+      { refreshToken: tokens.refreshToken }
+    );
+
+    // Set refresh token in cookie
+    response.cookie("refreshToken", tokens.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge:
+        parseInt(
+          process.env.JWT_REFRESH_TOKEN_SECRET_EXPIRES_IN?.split("d")[0]
+        ) *
+        24 *
+        60 *
+        60 *
+        1000, // 7 days in milliseconds
+    });
+
+    // Set access token in header
+    response.setHeader("Authorization", `Bearer ${tokens.accessToken}`);
 
     return response.status(200).json({
       message: API_RESPONSE.AUTHENTICATION.SIGN_IN_SUCCESS,
