@@ -1,5 +1,6 @@
 import { API_RESPONSE } from "../../constants/index.js";
-import { logger } from "../../services/index.js";
+import { Cart } from "../../models/index.js";
+import { logger, update } from "../../services/index.js";
 import Joi from "joi";
 
 /**
@@ -11,15 +12,67 @@ async function validateData(request) {
   let validationResult = { isValid: true, errors: "" };
   try {
     const schema = Joi.object({
-      body: Joi.object({}).messages({
-        "object.unknown": API_RESPONSE.EXTRA_FIELDS_NOT_ALLOWED,
-        "object.base": API_RESPONSE.INVALID_DATA,
+      body: Joi.object({
+        items: Joi.array()
+          .items(
+            Joi.object({
+              product: Joi.string()
+                .required()
+                .messages({
+                  "string.empty": API_RESPONSE.FIELD_IS_EMPTY.replace(
+                    "Field",
+                    "Product ID"
+                  ),
+                  "any.required": API_RESPONSE.FIELD_IS_REQUIRED.replace(
+                    "Field",
+                    "Product ID"
+                  ),
+                }),
+              quantity: Joi.number()
+                .min(1)
+                .required()
+                .messages({
+                  "number.min": API_RESPONSE.FIELD_IS_INVALID.replace(
+                    "Field",
+                    "Quantity"
+                  ),
+                  "number.empty": API_RESPONSE.FIELD_IS_EMPTY.replace(
+                    "Field",
+                    "Quantity"
+                  ),
+                  "any.required": API_RESPONSE.FIELD_IS_REQUIRED.replace(
+                    "Field",
+                    "Quantity"
+                  ),
+                }),
+            })
+          )
+          .required()
+          .messages({
+            "array.base": API_RESPONSE.FIELD_IS_INVALID.replace(
+              "Field",
+              "Items"
+            ),
+            "array.empty": API_RESPONSE.FIELD_IS_EMPTY.replace(
+              "Field",
+              "Items"
+            ),
+            "any.required": API_RESPONSE.FIELD_IS_REQUIRED.replace(
+              "Field",
+              "Items"
+            ),
+          }),
       }),
+      user: Joi.object({}).required().unknown(true),
+    }).messages({
+      "object.unknown": API_RESPONSE.EXTRA_FIELDS_NOT_ALLOWED,
+      "object.base": API_RESPONSE.INVALID_DATA,
     });
 
     await schema.validateAsync(
       {
         body: request.body,
+        user: request.user,
       },
       {
         abortEarly: false,
@@ -43,16 +96,28 @@ async function validateData(request) {
  */
 async function editCart(request, response, next) {
   try {
+    // Validate the request data
     const validationResult = await validateData(request);
     if (!validationResult.isValid) {
-      const error = new Error(validationResult.errors);
-      error.status = 400;
-      throw error;
+      return response.status(400).json({
+        message: API_RESPONSE.INVALID_DATA,
+        errors: validationResult.errors,
+        status: 400,
+      });
     }
+
+    const userId = request.user._id;
+    const { items } = request.body;
+
+    const updatedCart = await update(
+      Cart,
+      { user: userId, status: "active" },
+      { items }
+    );
 
     return response.status(200).json({
       message: API_RESPONSE.CART.CART_UPDATE_SUCCESS,
-      data: null,
+      data: updatedCart,
       status: 200,
     });
   } catch (error) {

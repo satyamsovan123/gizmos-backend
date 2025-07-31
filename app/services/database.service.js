@@ -35,6 +35,22 @@ async function find(model, query) {
 }
 
 /**
+ * This function uses Mongoose to find document in the specified model.
+ * @param {*} model - The Mongoose model to use.
+ * @param {*} query - The query to find documents.
+ * @returns {Promise<*>} - The found documents.
+ * @throws {Error} - If there is an error finding the documents.
+ */
+async function findOne(model, query) {
+  try {
+    const record = await model.findOne(query).lean();
+    return record;
+  } catch (error) {
+    throw new Error("Error finding record: " + error.message);
+  }
+}
+
+/**
  * This function uses Mongoose to aggregate documents in the specified model.
  * @param {*} model - The Mongoose model to use.
  * @param {*} pipeline - The aggregation pipeline to apply.
@@ -87,4 +103,4 @@ async function remove(model, query) {
   }
 }
 
-export { create, find, aggregate, update, remove };
+export { create, find, findOne, aggregate, update, remove };

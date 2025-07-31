@@ -1,6 +1,6 @@
 import { API_RESPONSE } from "../../constants/index.js";
 import { User } from "../../models/index.js";
-import { find, logger, update } from "../../services/index.js";
+import { findOne, logger, update } from "../../services/index.js";
 import Joi from "joi";
 import { compareTextAndHash, generateTokens } from "./helper.js";
 
@@ -77,16 +77,16 @@ async function validateData(request) {
  * Validates data -> Checks if email and password matches -> Generates tokens -> Save refresh token in database -> Sets refresh token in cookie -> Sets access token in header
  * @param {*} request - The incoming request object.
  * @returns {Promise<{ isValid: boolean, errors: string }>} response.
- * @throws {Error} - If validation fails, an error is thrown with status 400 and validation errors.
- * @throws {Error} - If an unexpected error occurs, it is logged and passed to the next middleware.
  */
 async function signin(request, response, next) {
   try {
     const validationResult = await validateData(request);
     if (!validationResult.isValid) {
-      const error = new Error(validationResult.errors);
-      error.status = 400;
-      throw error;
+      return response.status(400).json({
+        message: validationResult.errors,
+        data: null,
+        status: 400,
+      });
     }
 
     const user = {
@@ -96,11 +96,13 @@ async function signin(request, response, next) {
     };
 
     // Check if user exists
-    const existingUser = (await find(User, { email: user.email }))[0];
+    const existingUser = await findOne(User, { email: user.email });
     if (!existingUser) {
-      const error = new Error(API_RESPONSE.AUTHENTICATION.SIGN_IN_FAILURE);
-      error.status = 401;
-      throw error;
+      return response.status(404).json({
+        message: API_RESPONSE.AUTHENTICATION.SIGN_IN_FAILURE,
+        data: null,
+        status: 404,
+      });
     }
 
     // Check if password matches
@@ -110,9 +112,11 @@ async function signin(request, response, next) {
     );
 
     if (!isPasswordValid) {
-      const error = new Error(API_RESPONSE.AUTHENTICATION.SIGN_IN_FAILURE);
-      error.status = 401;
-      throw error;
+      return response.status(401).json({
+        message: API_RESPONSE.AUTHENTICATION.SIGN_IN_FAILURE,
+        data: null,
+        status: 401,
+      });
     }
 
     // Generate tokens

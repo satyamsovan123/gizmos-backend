@@ -6,6 +6,7 @@
 // Authentication Controllers
 export { signin } from "./authenticationController/signin.controller.js";
 export { signup } from "./authenticationController/signup.controller.js";
+export { refreshTokenHandler } from "./authenticationController/refreshToken.controller.js";
 
 // Cart Controllers
 export { getCart } from "./cartController/getCart.controller.js";

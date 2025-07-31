@@ -1,5 +1,5 @@
 import { API_RESPONSE } from "../../constants/index.js";
-import { create, find, logger } from "../../services/index.js";
+import { create, findOne, logger } from "../../services/index.js";
 import { appEventEmitter } from "../../events/index.js";
 import Joi from "joi";
 import { User } from "../../models/index.js";
@@ -93,8 +93,6 @@ async function validateData(request) {
  * @param {*} response - The outgoing response object.
  * @param {*} next - The next middleware function.
  * @returns {Promise<void>} response.
- * @throws {Error} - If validation fails, an error is thrown with status 400 and validation errors.
- * @throws {Error} - If an unexpected error occurs, it is logged and passed to the next middleware.
  */
 async function signup(request, response, next) {
   try {
@@ -113,15 +111,15 @@ async function signup(request, response, next) {
     };
 
     // Check if user already exists
-    const existingUser = await find(User, {
+    const existingUser = await findOne(User, {
       email: user.email,
     });
-
-    if (existingUser.length > 0) {
-      const errorMessage = API_RESPONSE.USER.USER_EXISTS;
-      const error = new Error(errorMessage);
-      error.status = 409;
-      return next(error);
+    if (existingUser) {
+      return response.status(409).json({
+        message: API_RESPONSE.USER.USER_EXISTS,
+        status: 409,
+        data: null,
+      });
     }
 
     // Encrypt password before saving
@@ -130,10 +128,11 @@ async function signup(request, response, next) {
     const createdUser = await create(User, user);
 
     if (!createdUser) {
-      const errorMessage = API_RESPONSE.AUTHENTICATION.SIGN_UP_FAILURE;
-      const error = new Error(errorMessage);
-      error.status = 500;
-      return next(error);
+      return response.status(500).json({
+        message: API_RESPONSE.AUTHENTICATION.SIGN_UP_FAILURE,
+        status: 500,
+        data: null,
+      });
     }
 
     // Remove sensitive data from response

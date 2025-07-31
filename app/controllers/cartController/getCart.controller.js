@@ -1,5 +1,6 @@
 import { API_RESPONSE } from "../../constants/index.js";
-import { logger } from "../../services/index.js";
+import { Cart } from "../../models/index.js";
+import { create, findOne, logger } from "../../services/index.js";
 import Joi from "joi";
 
 /**
@@ -11,15 +12,17 @@ async function validateData(request) {
   let validationResult = { isValid: true, errors: "" };
   try {
     const schema = Joi.object({
-      body: Joi.object({}).messages({
-        "object.unknown": API_RESPONSE.EXTRA_FIELDS_NOT_ALLOWED,
-        "object.base": API_RESPONSE.INVALID_DATA,
-      }),
+      body: Joi.object({}),
+      user: Joi.object({}).required().unknown(true),
+    }).messages({
+      "object.unknown": API_RESPONSE.EXTRA_FIELDS_NOT_ALLOWED,
+      "object.base": API_RESPONSE.INVALID_DATA,
     });
 
     await schema.validateAsync(
       {
         body: request.body,
+        user: request.user,
       },
       {
         abortEarly: false,
@@ -43,16 +46,28 @@ async function validateData(request) {
  */
 async function getCart(request, response, next) {
   try {
+    // Validate the request data
     const validationResult = await validateData(request);
     if (!validationResult.isValid) {
-      const error = new Error(validationResult.errors);
-      error.status = 400;
-      throw error;
+      return response.status(400).json({
+        message: API_RESPONSE.INVALID_DATA,
+        errors: validationResult.errors,
+        status: 400,
+      });
+    }
+    const userId = request.user._id;
+
+    // Find the user's cart and populate the product details for each item.
+    let cart = await findOne(Cart, { user: userId, status: "active" });
+
+    // If the user doesn't have a cart, create one.
+    if (!cart) {
+      cart = await create(Cart, { user: userId, items: [] });
     }
 
     return response.status(200).json({
       message: API_RESPONSE.CART.CART_FETCH_SUCCESS,
-      data: null,
+      data: cart,
       status: 200,
     });
   } catch (error) {

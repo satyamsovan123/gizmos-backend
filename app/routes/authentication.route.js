@@ -1,7 +1,7 @@
 /**
  * @file This file defines the authentication routes.
  */
-import { signin, signup } from "../controllers/index.js";
+import { refreshTokenHandler, signin, signup } from "../controllers/index.js";
 
 import express from "express";
 
@@ -144,5 +144,7 @@ authenticationRouter.post("/signin", signin);
  *             Internal Server Error – An unexpected error occurred during user creation.
  */
 authenticationRouter.post("/signup", signup);
+
+authenticationRouter.post("/refresh", refreshTokenHandler);
 
 export { authenticationRouter };
